@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Water Conservation Crop Planning</title>
+  <style>
+    /* General body styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f8ff;
+      color: #333;
+      padding: 30px;
+      text-align: center;
+      margin: 0;
+    }
+
+    h1 {
+      color: #1e88e5;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Container to center content and style it */
+    .container {
+      margin: 50px auto;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 700px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .container:hover {
+      transform: scale(1.02);
+    }
+
+    /* Style for labels, dropdowns, and buttons */
+    label {
+      font-size: 18px;
+      color: #1e88e5;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    select,
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      font-size: 16px;
+      outline: none;
+    }
+
+    select:hover,
+    button:hover {
+      border-color: #1e88e5;
+      box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    button {
+      background-color: #1e88e5;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    button:active {
+      background-color: #1976d2;
+    }
+
+    /* Result Section */
+    .result {
+      background-color: #e8f5e9;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* Result Text Style */
+    .highlight {
+      font-weight: bold;
+      color: #388e3c;
+    }
+
+    /* Animation for result fade-in */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* Style for list of methods */
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    ul li {
+      background-color: #f1f8e9;
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    ul li:hover {
+      background-color: #aed581;
+    }
+
+    /* Add some responsive design */
+    @media (max-width: 600px) {
+      .container {
+        width: 90%;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Water Conservation Crop Planning Tool</h1>
+  <div class="container">
+    <h3>Select Your Crop</h3>
+
+    <!-- Crop Selection -->
+    <label for="crop">Choose your crop:</label>
+    <select id="crop">
+      <option value="Rice">Rice</option>
+      <option value="Maize">Maize</option>
+      <option value="Pulses">Pulses</option>
+      <option value="Groundnut">Groundnut</option>
+      <option value="Soybean">Soybean</option>
+      <option value="Sugarcane">Sugarcane</option>
+      <option value="Cotton">Cotton</option>
+      <option value="Tobacco">Tobacco</option>
+      <option value="Coffee">Coffee</option>
+      <option value="Tea">Tea</option>
+      <option value="Mango">Mango</option>
+      <option value="Banana">Banana</option>
+      <option value="Papaya">Papaya</option>
+      <option value="Tomato">Tomato</option>
+    </select>
+
+    <!-- Button to Get Information -->
+    <button onclick="getAdvice()">Get Crop Advice</button>
+
+    <!-- Display Results -->
+    <div id="result" class="result">
+      <h3>Crop Planting Advice</h3>
+      <p><strong>Optimal planting season:</strong> <span id="season" class="highlight"></span></p>
+      <p><strong>Recommended water conservation methods:</strong></p>
+      <ul id="methodsList"></ul>
+    </div>
+
+    <!-- Calculator -->
+    <div class="calculator" style="display: none;">
+      <h3>Water and Money Savings Calculator</h3>
+      <label for="land">Enter land area (acres):</label>
+      <input type="number" id="land" placeholder="Enter area in acres" />
+      <label for="irrigation">Select irrigation method:</label>
+      <select id="irrigation">
+        <option value="drip">Drip Irrigation</option>
+        <option value="traditional">Traditional Irrigation</option>
+      </select>
+      <button onclick="calculateSavings()">Calculate Savings</button>
+      <p id="savingResult"></p>
+    </div>
+  </div>
+
+  <!-- Modal for Method Details -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3 id="methodTitle"></h3>
+      <p id="methodDetails"></p>
+    </div>
+  </div>
+
+  <script>
+    const crops = {
+      "Rice": { season: "June - August", methods: ["Drip irrigation", "AWD", "Laser Leveling"] },
+      "Maize": { season: "April - June", methods: ["Drip irrigation", "Drought-resistant varieties"] },
+      "Pulses": { season: "June - August", methods: ["Minimum tillage", "Rainwater harvesting"] },
+      "Groundnut": { season: "May - June", methods: ["Crop rotation", "Drip irrigation"] },
+      "Soybean": { season: "June - July", methods: ["Mulching", "Soil moisture conservation"] },
+      "Sugarcane": { season: "June - September", methods: ["Trash mulching", "Drip irrigation"] },
+      "Cotton": { season: "April - June", methods: ["Drip irrigation", "Water-efficient varieties"] },
+      "Tobacco": { season: "August - October", methods: ["Drip irrigation", "Weed control"] },
+      "Coffee": { season: "June - July", methods: ["Shade regulation", "Water-efficient spraying"] },
+      "Tea": { season: "May - July", methods: ["Rainwater harvesting", "Contour bunding"] },
+      "Mango": { season: "June - July", methods: ["Mulching", "Basins with check dams"] },
+      "Banana": { season: "May - June", methods: ["Drip irrigation", "Fertigation"] },
+      "Papaya": { season: "March - April", methods: ["Mulching", "Plant basin irrigation"] },
+      "Tomato": { season: "October - December", methods: ["Drip irrigation", "Precision farming"] }
+    };
+
+    const methodDetails = {
+      "Drip irrigation": "Water directly to roots through tubing—reduces water use by up to 60%.",
+      "AWD": "Alternate Wetting and Drying—intermittent flooding in rice for less water usage.",
+      "Laser Leveling": "Land leveling to evenly distribute water and reduce runoff.",
+      "Drought-resistant varieties": "Crops that can tolerate dry spells and need less water.",
+      "Minimum tillage": "Reduces soil disturbance, retains moisture.",
+      "Rainwater harvesting": "Collect and store rainwater for irrigation.",
+      "Mulching": "Cover soil with leaves/straw to keep moisture in.",
+      "Soil moisture conservation": "Use sensors or mulch to hold soil moisture.",
+      "Crop rotation": "Plant different crops each season to boost soil health & reduce water use.",
+      "Trash mulching": "Leave plant residue on field to reduce evaporation.",
+      "Water-efficient varieties": "Genetically adapted crops for less water.",
+      "Weed control": "Prevents unnecessary competition for water.",
+      "Shade regulation": "Used in coffee to avoid direct sunlight & reduce water loss.",
+      "Water-efficient spraying": "Use of micro-sprinklers or foggers to limit water usage.",
+      "Contour bunding": "Build contour lines to prevent soil and water runoff.",
+      "Basins with check dams": "Mini water catchments for fruit trees.",
+      "Fertigation": "Apply fertilizers via drip lines to reduce input waste.",
+      "Plant basin irrigation": "Localized watering at base of plant.",
+      "Precision farming": "Use of data and sensors to optimize water and fertilizer usage."
+    };
+
+    function getAdvice() {
+      const crop = document.getElementById("crop").value;
+      const cropInfo = crops[crop];
+
+      if (cropInfo) {
+        document.getElementById("season").textContent = cropInfo.season;
+        const methodsList = document.getElementById("methodsList");
+        methodsList.innerHTML = "";
+
+        cropInfo.methods.forEach(method => {
+          const li = document.createElement("li");
+          li.textContent = method;
+          li.onclick = () => showMethodDetails(method);
+          methodsList.appendChild(li);
+        });
+
+        document.getElementById("result").style.display = "block";
+        document.querySelector(".calculator").style.display = "block";
+      }
+    }
+
+    function showMethodDetails(method) {
+      document.getElementById("methodTitle").textContent = method;
+      document.getElementById("methodDetails").textContent = methodDetails[method] || "More info coming soon!";
+      document.getElementById("modal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    function calculateSavings() {
+      const area = parseFloat(document.getElementById("land").value);
+      const method = document.getElementById("irrigation").value;
+
+      if (isNaN(area) || area <= 0) {
+        document.getElementById("savingResult").textContent = "Enter a valid land area.";
+        return;
+      }
+
+      const traditionalLiters = 20000; // per acre
+      const dripSavings = 15000; // saved by drip
+      const waterCostPerLiter = 0.1; // in INR
+
+      let message = "";
+
+      if (method === "drip") {
+        const totalSavedLiters = dripSavings * area;
+        const moneySaved = totalSavedLiters * waterCostPerLiter;
+        message = `💧 You save approx ${totalSavedLiters.toLocaleString()} liters of water and ₹${moneySaved.toFixed(2)}!`;
+      } else {
+        message = `💦 Traditional irrigation may use up to ${traditionalLiters * area} liters. Try switching to drip for big savings!`;
+      }
+
+      document.getElementById("savingResult").textContent = message;
+    }
+  </script>
+</body>
+
+</html>
+

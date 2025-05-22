@@ -1,0 +1,102 @@
+<script>
+    const crops = {
+      "Rice": { season: "June - August", methods: ["Drip irrigation", "AWD", "Laser Leveling"] },
+      "Maize": { season: "April - June", methods: ["Drip irrigation", "Drought-resistant varieties"] },
+      "Pulses": { season: "June - August", methods: ["Minimum tillage", "Rainwater harvesting"] },
+      "Groundnut": { season: "May - June", methods: ["Crop rotation", "Drip irrigation"] },
+      "Soybean": { season: "June - July", methods: ["Mulching", "Soil moisture conservation"] },
+      "Sugarcane": { season: "June - September", methods: ["Trash mulching", "Drip irrigation"] },
+      "Cotton": { season: "April - June", methods: ["Drip irrigation", "Water-efficient varieties"] },
+      "Tobacco": { season: "August - October", methods: ["Drip irrigation", "Weed control"] },
+      "Coffee": { season: "June - July", methods: ["Shade regulation", "Water-efficient spraying"] },
+      "Tea": { season: "May - July", methods: ["Rainwater harvesting", "Contour bunding"] },
+      "Mango": { season: "June - July", methods: ["Mulching", "Basins with check dams"] },
+      "Banana": { season: "May - June", methods: ["Drip irrigation", "Fertigation"] },
+      "Papaya": { season: "March - April", methods: ["Mulching", "Plant basin irrigation"] },
+      "Tomato": { season: "October - December", methods: ["Drip irrigation", "Precision farming"] }
+    };
+    
+    const methodDetails = {
+      "Drip irrigation": "Water directly to roots through tubing—reduces water use by up to 60%.",
+      "AWD": "Alternate Wetting and Drying—intermittent flooding in rice for less water usage.",
+      "Laser Leveling": "Land leveling to evenly distribute water and reduce runoff.",
+      "Drought-resistant varieties": "Crops that can tolerate dry spells and need less water.",
+      "Minimum tillage": "Reduces soil disturbance, retains moisture.",
+      "Rainwater harvesting": "Collect and store rainwater for irrigation.",
+      "Mulching": "Cover soil with leaves/straw to keep moisture in.",
+      "Soil moisture conservation": "Use sensors or mulch to hold soil moisture.",
+      "Crop rotation": "Plant different crops each season to boost soil health & reduce water use.",
+      "Trash mulching": "Leave plant residue on field to reduce evaporation.",
+      "Water-efficient varieties": "Genetically adapted crops for less water.",
+      "Weed control": "Prevents unnecessary competition for water.",
+      "Shade regulation": "Used in coffee to avoid direct sunlight & reduce water loss.",
+      "Water-efficient spraying": "Use of micro-sprinklers or foggers to limit water usage.",
+      "Contour bunding": "Build contour lines to prevent soil and water runoff.",
+      "Basins with check dams": "Mini water catchments for fruit trees.",
+      "Fertigation": "Apply fertilizers via drip lines to reduce input waste.",
+      "Plant basin irrigation": "Localized watering at base of plant.",
+      "Precision farming": "Use of data and sensors to optimize water and fertilizer usage."
+    };
+    
+    // ✅ Function to display crop advice
+    function getAdvice() {
+      const crop = document.getElementById("crop").value;
+      const cropInfo = crops[crop];
+    
+      if (cropInfo) {
+        document.getElementById("season").textContent = cropInfo.season;
+        const methodsList = document.getElementById("methodsList");
+        methodsList.innerHTML = "";
+    
+        cropInfo.methods.forEach(method => {
+          const li = document.createElement("li");
+          li.textContent = method;
+          li.onclick = () => showMethodDetails(method);
+          methodsList.appendChild(li);
+        });
+    
+        document.getElementById("result").style.display = "block";
+        document.querySelector(".calculator").style.display = "block";
+      }
+    }
+    
+    // ✅ Show details when a method is clicked
+    function showMethodDetails(method) {
+      document.getElementById("methodTitle").textContent = method;
+      document.getElementById("methodDetails").textContent = methodDetails[method] || "More info coming soon!";
+      document.getElementById("modal").style.display = "block";
+    }
+    
+    // ✅ Close the popup/modal
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+    
+    // ✅ Calculate water and money savings
+    function calculateSavings() {
+      const area = parseFloat(document.getElementById("land").value);
+      const method = document.getElementById("irrigation").value;
+    
+      if (isNaN(area) || area <= 0) {
+        document.getElementById("savingResult").textContent = "Enter a valid land area.";
+        return;
+      }
+    
+      const traditionalLiters = 20000; // per acre
+      const dripSavings = 15000;       // saved by drip
+      const waterCostPerLiter = 0.1;   // in INR
+    
+      let message = "";
+    
+      if (method === "drip") {
+        const totalSavedLiters = dripSavings * area;
+        const moneySaved = totalSavedLiters * waterCostPerLiter;
+        message = `💧 You save approx ${totalSavedLiters.toLocaleString()} liters of water and ₹${moneySaved.toFixed(2)}!`;
+      } else {
+        message = `💦 Traditional irrigation may use up to ${traditionalLiters * area} liters. Try switching to drip for big savings!`;
+      }
+    
+      document.getElementById("savingResult").textContent = message;
+    }
+    </script>
+    

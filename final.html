@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Water Conservation Crop Planning</title>
+    <style>
+        /* General body styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            padding: 30px;
+            text-align: center;
+            margin: 0;
+        }
+
+        h1 {
+            color: #1e88e5;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Container to center content and style it */
+        .container {
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 700px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+        }
+
+        /* Style for labels, dropdowns, and buttons */
+        label {
+            font-size: 18px;
+            color: #1e88e5;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        select,
+        button,
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            outline: none;
+        }
+
+        select:hover,
+        button:hover,
+        input[type="number"]:hover {
+            border-color: #1e88e5;
+            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            background-color: #1e88e5;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        button:active {
+            background-color: #1976d2;
+        }
+
+        /* Result Section */
+        .result {
+            background-color: #e8f5e9;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Result Text Style */
+        .highlight {
+            font-weight: bold;
+            color: #388e3c;
+        }
+
+        /* Animation for result fade-in */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Style for list of methods */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #f1f8e9;
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        ul li:hover {
+            background-color: #aed581;
+        }
+
+        /* Add some responsive design */
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Water Conservation Crop Planning Tool</h1>
+    <div class="container">
+        <h3>Select Your State, District, and Crop</h3>
+
+        <!-- State Selection -->
+        <label for="state">Choose your state:</label>
+        <select id="state" onchange="populateDistricts()">
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Telangana">Telangana</option>
+        </select>
+
+        <!-- District Selection -->
+        <label for="district">Choose your district:</label>
+        <select id="district">
+            <!-- Districts will be populated dynamically -->
+        </select>
+
+        <!-- Crop Selection -->
+        <label for="crop">Choose your crop:</label>
+        <select id="crop">
+            <option value="Rice">Rice</option>
+            <option value="Sugarcane">Sugarcane</option>
+            <option value="Cotton">Cotton</option>
+            <option value="Groundnut">Groundnut</option>
+            <option value="Soybean">Soybean</option>
+            <option value="Maize">Maize</option>
+            <option value="Pulses">Pulses</option>
+            <option value="Millets">Millets</option>
+            <option value="Tomato">Tomato</option>
+            <option value="Onion">Onion</option>
+            <!-- Add more crops as needed -->
+        </select>
+
+        <!-- Input Field for Land Area -->
+        <label for="landArea">Enter land area (in hectares):</label>
+        <input type="number" id="landArea" placeholder="Enter area in hectares" />
+
+        <!-- Button to Get Information -->
+        <button onclick="getCropAdvice()">Get Crop Advice</button>
+
+        <!-- Display Results -->
+        <div id="result" class="result">
+            <h3>Crop Planting Advice</h3>
+            <p><strong>Optimal planting season:</strong> <span id="plantingSeason" class="highlight"></span></p>
+            <p><strong>Recommended water conservation methods:</strong></p>
+            <ul id="waterMethods"></ul>
+            <h4>Water Saved Calculation:</h4>
+            <p><strong>Total water saved:</strong> <span id="waterSaved" class="highlight">0</span> Liters</p>
+            <h4>Money Saved Calculation:</h4>
+            <p><strong>Total money saved:</strong> ₹<span id="moneySaved" class="highlight">0</span></p>
+        </div>
+    </div>
+
+    <!-- Modal to Show Detailed Method Information -->
+    <div id="methodModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="methodTitle"></h2>
+            <p id="methodDescription"></p>
+        </div>
+    </div>
+
+    <script>
+        // Water conservation methods and planting seasons for each crop
+        const cropData = {
+            "Rice": {
+                season: "June to August",
+                methods: {
+                    "Drip irrigation": 0.30, // 30% water saving
+                    "Alternate Wetting and Drying (AWD)": 0.20,
+                    "Precision Land Leveling": 0.15
+                }
+            },
+            "Sugarcane": {
+                season: "June to September",
+                methods: {
+                    "Drip irrigation": 0.25,
+                    "Rainwater harvesting": 0.35,
+                    "Mulching": 0.15
+                }
+            },
+            "Cotton": {
+                season: "April to June",
+                methods: {
+                    "Drip irrigation": 0.30,
+                    "Soil moisture management": 0.20,
+                    "Water-efficient varieties": 0.25
+                }
+            },
+            "Groundnut": {
+                season: "May to June",
+                methods: {
+                    "Drip irrigation": 0.30,
+                    "Mulching": 0.20,
+                    "Crop rotation": 0.25
+                }
+            },
+            "Soybean": {
+                season: "June to July",
+                methods: {
+                    "Rainwater harvesting": 0.30,
+                    "Drip irrigation": 0.25,
+                    "Moisture conservation techniques": 0.20
+                }
+            },
+            // Additional crops can be added similarly
+        };
+
+        const stateDistricts = {
+            "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tirunelveli", "Salem", "Trichy", "Erode", "Vellore", "Dindigul", "Tiruvannamalai", "Kanchipuram", "Ramanathapuram", "Villupuram", "Tirupur", "Karur", "Pudukkottai", "Nagapattinam", "Thanjavur", "Sivagangai", "Theni"],
+            "Karnataka": ["Bengaluru", "Mysuru", "Hubli", "Dharwad", "Mangalore", "Belagavi", "Tumakuru", "Chikkamagaluru", "Kodagu", "Hassan", "Mandya", "Chitradurga", "Bagalkot", "Kolar", "Raichur", "Bidar", "Davangere", "Ballari", "Udupi", "Shimoga"],
+            "Kerala": ["Thiruvananthapuram", "Kochi", "Kottayam", "Thrissur", "Palakkad", "Malappuram", "Kozhikode", "Kannur", "Alappuzha", "Idukki", "Wayanad", "Ernakulam", "Pathanamthitta", "Kasargod", "Ponnani", "Ottapalam", "Changanassery", "Varkala", "Nedumangad", "Punalur"],
+            "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Rajahmundry", "Kakinada", "Nellore", "Chittoor", "Kadapa", "Anantapur", "Tirupati", "Srikakulam", "Vizianagaram", "West Godavari", "East Godavari", "Krishna", "Prakasam", "Kurnool", "Bapatla", "Peddapalli", "Warangal"],
+            "Telangana": ["Hyderabad", "Warangal", "Khammam", "Nizamabad", "Karimnagar", "Adilabad", "Mahabubnagar", "Medak", "Nalgonda", "Rangareddy", "Sangareddy", "Khammam", "Jangaon", "Nagarkurnool", "Jayashankar", "Sircilla", "Mancherial", "Jagitial", "Siddipet", "Vikarabad"]
+        };
+
+        // Populate the district dropdown based on the selected state
+        function populateDistricts() {
+            const state = document.getElementById('state').value;
+            const districtDropdown = document.getElementById('district');
+            districtDropdown.innerHTML = ''; // Clear previous options
+
+            const districts = stateDistricts[state] || [];
+
+            districts.forEach(function (district) {
+                const option = document.createElement('option');
+                option.value = district;
+                option.textContent = district;
+                districtDropdown.appendChild(option);
+            });
+        }
+
+        // Function to get crop advice and calculate water savings
+        function getCropAdvice() {
+            const state = document.getElementById('state').value;
+            const district = document.getElementById('district').value;
+            const crop = document.getElementById('crop').value;
+            const landArea = parseFloat(document.getElementById('landArea').value);
+
+            const advice = cropData[crop];
+
+            if (advice && !isNaN(landArea) && landArea > 0) {
+                document.getElementById("plantingSeason").textContent = advice.season;
+
+                // Clear previous methods
+                const waterMethodsList = document.getElementById("waterMethods");
+                waterMethodsList.innerHTML = '';
+
+                // Calculate and display methods
+                let selectedMethod = null;
+                for (let method in advice.methods) {
+                    const li = document.createElement("li");
+                    li.textContent = method;
+                    li.onclick = function () {
+                        selectedMethod = method;
+                        displayWaterSavings(advice.methods[method], landArea);
+                    };
+                    waterMethodsList.appendChild(li);
+                }
+
+                // Show the results section
+                document.getElementById("result").style.display = "block";
+            } else {
+                alert("Please enter valid land area.");
+            }
+        }
+
+        // Display water savings and money savings for the selected method
+        function displayWaterSavings(percentageSaved, landArea) {
+            const waterUsedPerHectare = 5000; // Assume water use per hectare is 5000 liters
+            const waterSaved = landArea * waterUsedPerHectare * percentageSaved;
+            const moneySaved = waterSaved * 0.02; // Assuming ₹0.02 per liter of water
+
+            document.getElementById("waterSaved").textContent = waterSaved.toFixed(2);
+            document.getElementById("moneySaved").textContent = moneySaved.toFixed(2);
+        }
+
+        // Initial district population for Tamil Nadu (default state)
+        populateDistricts();
+    </script>
+
+</body>
+
+</html>
